@@ -7,6 +7,9 @@
   "scripts": {
     "test": "truffle test"
   },
+  "dependencies": {
+    "openzeppelin-solidity": "^1.11.0-rc.1",
+  },
   "devDependencies": {
     "truffle": "^4.0.4"
   }
