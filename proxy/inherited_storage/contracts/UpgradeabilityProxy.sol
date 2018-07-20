@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 import './Proxy.sol';
 import './IRegistry.sol';
@@ -13,7 +13,7 @@ contract UpgradeabilityProxy is Proxy, UpgradeabilityStorage {
   /**
   * @dev Constructor function
   */
-  function UpgradeabilityProxy(string _version) public {
+  constructor (string _version) public {
     registry = IRegistry(msg.sender);
     upgradeTo(_version);
   }
@@ -22,7 +22,7 @@ contract UpgradeabilityProxy is Proxy, UpgradeabilityStorage {
   * @dev Upgrades the implementation to the requested version
   * @param _version representing the version name of the new implementation to be set
   */
-  function upgradeTo(string _version) public {
+  function upgradeTo(string _version) public onlyOwner{
     _implementation = registry.getVersion(_version);
   }
 
