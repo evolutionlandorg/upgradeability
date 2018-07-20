@@ -1,37 +1,22 @@
-# Upgradeability using Inherited Storage
+### 如何初始化
 
-The idea of this approach is to allow us to upgrade a contract's behavior, assuming that each version will follow the 
-storage structure of the previous one. 
+1. 部署`Registry`合约
+2. 部署逻辑合约的初始版本(V1)，并确保它继承了`Upgradeable`合约
+3. 向`Registry`合约中注册这个最初版本(V1)的地址
+4. 要求`Registry`合约创建一个`UpgradeabilityProxy`实例
+5. 调用你的`UpgrageabilityProxy`实例来升级到你最初版本(V1)
 
-The approach consists in having a proxy that delegates calls to specific implementations which can be upgraded, without
-changing the storage structure of the previous implementations, but having the chance to add new state variables. Given
-the proxy uses `delegatecall` to resolve the requested behaviors, the upgradeable contract's state will be stored in 
-the proxy contract itself. 
 
-Since we have two really different kinds of data, one related to the upgradeability mechanism and another 
-strictly related to the token contract domain, naming was really important here to expressed correctly what's 
-going on. This is the proposed model:
-            
-                   -------             =========================
-                  | Proxy |           ║  UpgradeabilityStorage  ║
-                   -------             =========================
-                      ↑                 ↑                     ↑            
-                     ---------------------              -------------
-                    | UpgradeabilityProxy |            | Upgradeable |
-                     ---------------------              ------------- 
-                                                          ↑        ↑
-                                                  ----------      ---------- 
-                                                 | Token_V0 |  ← | Token_V1 |         
-                                                  ----------      ---------- 
-                                          
+### 如何升级
 
-`Proxy`, `UpgradeabilityProxy` and `UpgradeabilityStorage` are generic contracts that can be used to implement
-upgradeability through proxies. In this example we use all these contracts to implement an upgradeable ERC20 token. 
+1. 部署一个继承了你最初版本合约的新版本(V2)，V2必须继承V1
+2. 向`Registry`中注册合约的新版本V2
+3. 调用你的`UpgradeabilityProxy`实例来升级到最新注册的版本
 
-`UpgradeabilityProxy` is the contract that will delegate calls to specific implementations of the ERC20 token behavior. 
-These behaviors are the code that can be upgraded by the token developer (e.g. `Token_V0` and `Token_V1`). 
 
-The `UpgradeabilityStorage` contract holds data needed for upgradeability, which will be inherited from each token
-behavior though `Upgradeable`. Then, each token behavior defines all the necessary state variables to 
-carry out their storage. Notice that `Token_V1` inherits the same storage structure defined in `Token_V0`. 
-This is a requirement of the proposed approach to ensure the proxy storage is not messed up.
+### 如何调用
+对proxy套用当前版本的逻辑合约的ABI，正常调用方法
+
+### 如何转移proxy合约所有权
+调用`Registry`中的`transferProxyOwnership`方法进行所有权转移；
+
