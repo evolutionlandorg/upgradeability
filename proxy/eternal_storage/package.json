@@ -1,7 +1,6 @@
 {
   "name": "@evolutionland/upgradeability-using-eternal-storage",
   "version": "0.1.0",
-  "private": true,
   "author": "Facu Spagnuolo <facu@zeppelin.solutions>",
   "license": "MIT",
   "scripts": {

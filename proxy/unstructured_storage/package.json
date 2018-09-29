@@ -1,7 +1,6 @@
 {
   "name": "@evolutionland/upgraeability-using-unstructured-storage",
   "version": "0.1.0",
-  "private": true,
   "author": "Facundo Spagnuolo <facundo@zeppelin.solutions>",
   "license": "MIT",
   "scripts": {
